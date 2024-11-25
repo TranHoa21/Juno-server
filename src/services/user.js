@@ -36,6 +36,42 @@ export const createNewUser = async ({ name, email, password }) => {
         throw error;
     }
 }
+export const createNewUserForAdmin = async ({ name, email, password, phonenumber }) => {
+    try {
+        const generateRandomNumber = () => {
+            const min = Math.pow(10, 5); // 10^5 = 100,000
+            const max = Math.pow(10, 6) - 1; // 10^6 - 1 = 999,999
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        };
+        const newId = `${generateRandomNumber()}`;
+
+        const existingUser = await db.User.findOne({ where: { email } });
+        if (existingUser) {
+            return {
+                err: 1,
+                mes: 'Email has been registered, please use another email',
+            };
+        }
+
+        const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(8));
+        const getNewUser = await db.User.create({
+            id: newId,
+            name,
+            email,
+            password: hashedPassword,
+            phonenumber, // Thêm phoneNumber vào đối tượng tạo
+        });
+
+        return {
+            err: 0,
+            mes: 'User created successfully.',
+            user: getNewUser,
+        };
+    } catch (error) {
+        console.log('check err >>>', error);
+        throw error;
+    }
+};
 export const createNewUserEmployee = async ({ name, email, password, position = '', status = 'active', role = '', permissions = '' }) => {
     try {
         const generateRandomNumber = () => {
@@ -59,9 +95,9 @@ export const createNewUserEmployee = async ({ name, email, password, position = 
             name,
             email,
             password: hashedPassword,
-            position, // Thêm position
-            status, // Thêm status
-            permissions,
+            position,
+            status,
+            permissions: permissions.join(','), // Lưu permissions dưới dạng JSON
             role
         });
 

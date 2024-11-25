@@ -8,6 +8,15 @@ export const creatUser = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+export const creatUserForAdmin = async (req, res) => {
+    const { name, email, password, phonenumber } = req.body
+    try {
+        const result = await services.createNewUserForAdmin({ name, email, password, phonenumber })
+        res.json(result)
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 export const creatUserEmployee = async (req, res) => {
     const { name, email, password, position, status, role, permissions } = req.body; // Thêm position và status
     try {

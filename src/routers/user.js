@@ -8,6 +8,7 @@ const router = Router();
 
 router.use(express.json());
 router.post('/', controllers.creatUser);
+router.post('/admin', controllers.creatUserForAdmin);
 router.post('/employee', controllers.creatUserEmployee);
 router.get('/', controllers.getAllUser);
 router.get('/:id', controllers.getUserById);
